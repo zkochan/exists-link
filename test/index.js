@@ -53,17 +53,17 @@ describe('exists link ::', function () {
     })
   })
   return context('async ::', function () {
-    it('when link exists', function (done) {
-      return existsLink('./node_modules/nyc', function (err, exists) {
-        exists.should.be.equal(true)
-        return done()
-      })
+    it('when link exists', function () {
+      return existsLink('./node_modules/nyc')
+        .then(exists => {
+          exists.should.be.equal(true)
+        })
     })
-    it('when link doesnt exist', function (done) {
-      return existsLink('./lol', function (err, exists) {
-        exists.should.be.equal(false)
-        return done()
-      })
+    it('when link doesnt exist', function () {
+      return existsLink('./lol')
+        .then(exists => {
+          exists.should.be.equal(false)
+        })
     })
     it('should throw an error when linkname is false', function () {
       try {
@@ -96,14 +96,6 @@ describe('exists link ::', function () {
       } catch (err) {
         err.message.should.be.equal('path must be a string')
       }
-    })
-    return it('returns a promise when no callback passed', function (done) {
-      existsLink('./README.md')
-        .then((exists) => {
-          exists.should.be.equal(true)
-          done()
-        })
-        .catch(done)
     })
   })
 })

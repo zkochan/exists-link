@@ -1,27 +1,27 @@
 'use strict'
 
 var fs = require('fs')
-var promise = require('cb2promise')
 
 function isString (str) {
   return typeof str === 'string'
 }
 
-function existsLink (filepath, cb) {
+function existsLink (filepath) {
   if (!isString(filepath)) throw new TypeError('path must be a string')
-  if (!cb) return promise(existsLink, filepath)
 
-  fs.lstat(filepath, function (err, stat) {
-    if (!err) {
-      try {
-        const isSymLink = statIsSymbolicLink(stat)
-        return cb(null, isSymLink)
-      } catch (err) {
-        return cb(err)
+  return new Promise((resolve, reject) => {
+    fs.lstat(filepath, function (err, stat) {
+      if (!err) {
+        try {
+          const isSymLink = statIsSymbolicLink(stat)
+          return resolve(isSymLink)
+        } catch (err) {
+          return reject(err)
+        }
       }
-    }
-    if (err.code === 'ENOENT') return cb(null, false)
-    cb(err)
+      if (err.code === 'ENOENT') return resolve(false)
+      reject(err)
+    })
   })
 }
 
